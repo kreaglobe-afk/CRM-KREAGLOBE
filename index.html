@@ -15,7 +15,7 @@
   --bg: #f4f6f8;
   --sidebar-bg: #1a1f2e;
   --sidebar-text: #a8b3cf;
-  --sidebar-active: #ffffff;a
+  --sidebar-active: #ffffff;
   --card-bg: #ffffff;
   --border: #e8ecf0;
   --text-primary: #1a1f2e;
@@ -1916,6 +1916,8 @@ input[type="checkbox"] {
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 <script>
 // ─────────────────────────────────────────
 //  DATA
@@ -2026,50 +2028,22 @@ const SCRIPTS = [
   },
 ];
 
-const STORAGE_KEYS = {
-  contacts: 'kesglobe-crm-contacts',
-  rdvs: 'kesglobe-crm-rdvs',
-  activity: 'kesglobe-crm-activity',
-  nextId: 'kesglobe-crm-nextId',
-  nextRdvId: 'kesglobe-crm-nextRdvId',
+const firebaseConfig = {
+  apiKey: "AIzaSyCW6fATj_7u49fhz2c8YOXVYwi4s-yOlPg",
+  authDomain: "crm-kreaglobe.firebaseapp.com",
+  projectId: "crm-kreaglobe",
+  storageBucket: "crm-kreaglobe.firebasestorage.app",
+  messagingSenderId: "1027478363862",
+  appId: "1:1027478363862:web:dae3542c2a13a23132b377",
+  measurementId: "G-LC6VVLBPME"
 };
 
-function loadData(key, defaultValue) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : defaultValue;
-  } catch (err) {
-    return defaultValue;
-  }
-}
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-function saveData(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (err) {
-    console.warn('Impossible de sauvegarder les données', err);
-  }
-}
-
-function saveContacts() {
-  saveData(STORAGE_KEYS.contacts, contacts);
-  saveData(STORAGE_KEYS.nextId, nextId);
-}
-
-function saveRdvs() {
-  saveData(STORAGE_KEYS.rdvs, rdvs);
-  saveData(STORAGE_KEYS.nextRdvId, nextRdvId);
-}
-
-function saveActivity() {
-  saveData(STORAGE_KEYS.activity, activity);
-}
-
-let contacts = loadData(STORAGE_KEYS.contacts, []);
-let rdvs = loadData(STORAGE_KEYS.rdvs, []);
-let activity = loadData(STORAGE_KEYS.activity, []);
-let nextId = loadData(STORAGE_KEYS.nextId, 1);
-let nextRdvId = loadData(STORAGE_KEYS.nextRdvId, 1);
+let contacts = [];
+let rdvs = [];
+let activity = [];
 let currentView = 'dashboard';
 let currentFilter = 'all';
 let currentPriorityFilter = '';
@@ -2080,35 +2054,47 @@ let selectedContact = null;
 let calendarDate = new Date();
 let selectedDay = new Date();
 
-// ─────────────────────────────────────────
-//  UTILS
-// ─────────────────────────────────────────
-function getLabel(id) { return LABELS.find(l => l.id === id) || { name:id, color:'#888', bg:'#eee', text:'#444', emoji:'•' }; }
-function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
-function fmtDate(d) { return new Date(d).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'}); }
+db.collection("contacts").onSnapshot((snapshot) => {
+  contacts = [];
+  snapshot.forEach((doc) => contacts.push({ ...doc.data(), id: doc.id }));
+  contacts.sort((a,b) => new Date(b.date) - new Date(a.date));
+  if (currentView === 'contacts') renderContacts();
+  if (currentView === 'dashboard') renderDashboard();
+  if (currentView === 'rapports') renderRapports();
+  if (selectedContact) {
+    const stillExists = contacts.find(c => c.id === selectedContact.id);
+    if (stillExists) openDetail(stillExists.id); else closeDetail();
+  }
+  try { updateMobileBadges(); } catch(e){}
+});
 
-function toast(msg, type='') {
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+db.collection("rdvs").onSnapshot((snapshot) => {
+  rdvs = [];
+  snapshot.forEach((doc) => rdvs.push({ ...doc.data(), id: doc.id }));
+  if (currentView === 'agenda') renderAgenda();
+  if (currentView === 'dashboard') renderDashboard();
+  try { updateMobileBadges(); } catch(e){}
+});
+
+db.collection("activity").orderBy("timestamp", "desc").limit(20).onSnapshot((snapshot) => {
+  activity = [];
+  snapshot.forEach((doc) => activity.push({ ...doc.data(), id: doc.id }));
+  if (currentView === 'dashboard') renderDashboard();
+});
+
+function saveContactToDB(c) {
+  const cCopy = { ...c };
+  const idStr = String(cCopy.id);
+  db.collection("contacts").doc(idStr).set(cCopy).catch(e => console.error(e));
 }
 
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => toast('Message copié !', 'success')).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy'); ta.remove();
-    toast('Message copié !', 'success');
-  });
+function saveRdvToDB(r) {
+  const rCopy = { ...r };
+  const idStr = String(rCopy.id);
+  db.collection("rdvs").doc(idStr).set(rCopy).catch(e => console.error(e));
 }
 
-function addActivity(text, color) {
-  activity.unshift({ text, color, time: 'à l\'instant' });
-  if (activity.length > 20) activity.pop();
-  saveActivity();
-}
+
 
 function populateLabelSelects() {
   const selectors = ['fc-label','bulk-label-select'];
@@ -2314,8 +2300,8 @@ function renderContacts() {
     const prioClass = {haute:'prio-haute',moyenne:'prio-moyenne',basse:'prio-basse'}[c.priority]||'prio-basse';
     const prioLabel = {haute:'HAUTE',moyenne:'MOY.',basse:'BASSE'}[c.priority]||c.priority;
     const isSelected = selectedContacts.has(c.id);
-    return `<tr class="${isSelected?'selected':''}" onclick="openDetail(${c.id})">
-      <td onclick="event.stopPropagation()"><input type="checkbox" ${isSelected?'checked':''} onchange="toggleSelect(${c.id},this)" /></td>
+    return `<tr class="${isSelected?'selected':''}" onclick="openDetail('${c.id}')">
+      <td onclick="event.stopPropagation()"><input type="checkbox" ${isSelected?'checked':''} onchange="toggleSelect('${c.id}',this)" /></td>
       <td>
         <div class="contact-cell">
           <div class="c-avatar" style="background:${l.bg};color:${l.text}">${initials(c.name)}</div>
@@ -2337,7 +2323,7 @@ function renderContacts() {
       <td onclick="event.stopPropagation()">
         <div style="display:flex;gap:4px">
           <button class="btn btn-sm btn-secondary" title="WhatsApp" onclick="openWA('${c.phone}')">💬</button>
-          <button class="btn btn-sm btn-secondary" title="Fiche" onclick="openDetail(${c.id})">👁</button>
+          <button class="btn btn-sm btn-secondary" title="Fiche" onclick="openDetail('${c.id}')">👁</button>
         </div>
       </td>
     </tr>`;
@@ -2386,10 +2372,10 @@ function openDetail(id) {
 
     <div class="detail-section">
       <div class="detail-section-title">Étiquette & Priorité</div>
-      <select class="detail-label-select" onchange="changeLabel(${c.id},this.value)">
+      <select class="detail-label-select" onchange="changeLabel('${c.id}',this.value)">
         ${LABELS.map(lab=>`<option value="${lab.id}" ${lab.id===c.label?'selected':''}>${lab.emoji} ${lab.name}</option>`).join('')}
       </select>
-      <select class="prio-select" onchange="changePriority(${c.id},this.value)" style="margin-top:6px">
+      <select class="prio-select" onchange="changePriority('${c.id}',this.value)" style="margin-top:6px">
         <option value="haute" ${c.priority==='haute'?'selected':''}>🔴 Priorité haute</option>
         <option value="moyenne" ${c.priority==='moyenne'?'selected':''}>🟡 Priorité moyenne</option>
         <option value="basse" ${c.priority==='basse'?'selected':''}>🟢 Priorité basse</option>
@@ -2398,7 +2384,7 @@ function openDetail(id) {
 
     <div class="detail-section">
       <div class="detail-section-title">Note secrétariat</div>
-      <textarea class="note-area" id="note-area-${c.id}" onchange="updateNote(${c.id},this.value)">${c.note||''}</textarea>
+      <textarea class="note-area" id="note-area-${c.id}" onchange="updateNote('${c.id}',this.value)">${c.note||''}</textarea>
     </div>
 
     <div class="detail-section">
@@ -2411,8 +2397,8 @@ function openDetail(id) {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
         Ouvrir dans WhatsApp
       </button>
-      <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="openAddRdvModalFor(${c.id})">📅 Planifier un RDV</button>
-      <button class="btn-archive-full" onclick="changeLabel(${c.id},'archive')">🗂 Archiver ce contact</button>
+      <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="openAddRdvModalFor('${c.id}')">📅 Planifier un RDV</button>
+      <button class="btn-archive-full" onclick="changeLabel('${c.id}','archive')">🗂 Archiver ce contact</button>
     </div>
   `;
 }
@@ -2431,7 +2417,7 @@ function changeLabel(id, val) {
   c.history = c.history || [];
   c.history.push({ action:`Étiquette : ${oldLabel} → ${newLabel}`, date: new Date().toLocaleDateString('fr-FR') });
   addActivity(`Étiquette de <strong>${c.name}</strong> : ${oldLabel} → ${newLabel}`, getLabel(val).color);
-  saveContacts();
+  saveContactToDB(c);
   toast(`Étiquette mise à jour : ${newLabel}`, 'success');
   renderContacts();
   if (selectedContact && selectedContact.id === id) openDetail(id);
@@ -2443,14 +2429,14 @@ function changePriority(id, val) {
   c.priority = val;
   c.history = c.history || [];
   c.history.push({ action:`Priorité → ${val}`, date: new Date().toLocaleDateString('fr-FR') });
-  saveContacts();
+  saveContactToDB(c);
   toast('Priorité mise à jour', 'success');
   renderContacts();
 }
 
 function updateNote(id, val) {
   const c = contacts.find(x=>x.id===id);
-  if (c) { c.note = val; saveContacts(); toast('Note sauvegardée', 'success'); }
+  if (c) { c.note = val; saveContactToDB(c); toast('Note sauvegardée', 'success'); }
 }
 
 function toggleSelect(id, cb) {
@@ -2483,7 +2469,7 @@ function bulkArchive() {
   if (!confirm(`Archiver ${selectedContacts.size} contact(s) ?`)) return;
   selectedContacts.forEach(id => {
     const c = contacts.find(x=>x.id===id);
-    if (c) { c.label='archive'; c.history=c.history||[]; c.history.push({action:'Archivé',date:new Date().toLocaleDateString('fr-FR')}); }
+    if (c) { c.label='archive'; c.history=c.history||[]; c.history.push({action:'Archivé',date:new Date().toLocaleDateString('fr-FR')}); saveContactToDB(c); }
   });
   saveContacts();
   addActivity(`${selectedContacts.size} contact(s) archivés`, '#E24B4A');
@@ -2502,7 +2488,7 @@ function applyBulkLabel() {
   if (!val) { toast('Choisissez une étiquette','error'); return; }
   selectedContacts.forEach(id => {
     const c = contacts.find(x=>x.id===id);
-    if (c) { c.label=val; c.history=c.history||[]; c.history.push({action:`Étiquette groupée → ${getLabel(val).name}`,date:new Date().toLocaleDateString('fr-FR')}); }
+    if (c) { c.label=val; c.history=c.history||[]; c.history.push({action:`Étiquette groupée → ${getLabel(val).name}`,date:new Date().toLocaleDateString('fr-FR')}); saveContactToDB(c); }
   });
   saveContacts();
   toast(`Étiquette appliquée à ${selectedContacts.size} contact(s)`, 'success');
@@ -2562,7 +2548,7 @@ function saveContact() {
   const phone = document.getElementById('fc-phone').value.trim();
   if (!name || !phone) { toast('Nom et téléphone requis','error'); return; }
   const c = {
-    id: nextId++,
+    id: Date.now().toString() + Math.random().toString(36).substr(2,5),
     name, phone,
     country: document.getElementById('fc-country').value,
     label: document.getElementById('fc-label').value || 'nouveau',
@@ -2574,8 +2560,7 @@ function saveContact() {
     date: new Date().toISOString().slice(0,10),
     history: [{ action:'Contact créé', date:new Date().toLocaleDateString('fr-FR') }]
   };
-  contacts.unshift(c);
-  saveContacts();
+  saveContactToDB(c);
   addActivity(`<strong>${c.name}</strong> ajouté comme ${getLabel(c.label).name}`, getLabel(c.label).color);
   closeModal('modal-contact');
   toast('Contact ajouté !', 'success');
@@ -2645,7 +2630,7 @@ function renderDayView() {
         <div class="slot-event-detail">${r.type}${c?' · '+c.country:''}</div>
         <div style="display:flex;gap:6px;margin-top:6px">
           <button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;padding:3px 8px;font-size:11px;border-radius:4px;cursor:pointer" onclick="openWA('${c?c.phone:''}')" ${!c?'disabled':''}>💬 WA</button>
-          <button class="btn btn-sm btn-secondary" style="font-size:11px;padding:3px 8px" onclick="markRdvDone(${r.id})">${r.done?'✅ Fait':'Marquer fait'}</button>
+          <button class="btn btn-sm btn-secondary" style="font-size:11px;padding:3px 8px" onclick="markRdvDone('${r.id}')">${r.done?'✅ Fait':'Marquer fait'}</button>
         </div>
       </div>`;
     }).join('');
@@ -2677,7 +2662,7 @@ function renderUpcoming() {
 
 function markRdvDone(id) {
   const r = rdvs.find(x=>x.id===id);
-  if (r) { r.done=true; saveRdvs(); const c=contacts.find(x=>x.id===r.contactId); addActivity(`RDV terminé avec <strong>${c?c.name:'?'}</strong>`, '#25D366'); toast('RDV marqué comme terminé','success'); renderAgenda(); }
+  if (r) { r.done=true; saveRdvToDB(r); const c=contacts.find(x=>x.id===r.contactId); addActivity(`RDV terminé avec <strong>${c?c.name:'?'}</strong>`, '#25D366'); toast('RDV marqué comme terminé','success'); renderAgenda(); }
 }
 
 function openAddRdvModal() {
@@ -2696,14 +2681,14 @@ function openAddRdvModalFor(contactId) {
 }
 
 function saveRdv() {
-  const contactId = parseInt(document.getElementById('rdv-contact').value);
+  const contactId = String(document.getElementById('rdv-contact').value);
   const date = document.getElementById('rdv-date').value;
   const time = document.getElementById('rdv-time').value;
   if (!contactId||!date||!time) { toast('Remplissez tous les champs requis','error'); return; }
   const c = contacts.find(x=>x.id===contactId);
-  rdvs.push({ id:nextRdvId++, contactId, date, time, type:document.getElementById('rdv-type').value, notes:document.getElementById('rdv-notes').value, done:false });
-  saveRdvs();
-  if (c) { c.label='rdv'; c.history=c.history||[]; c.history.push({action:`RDV planifié — ${date} ${time}`,date:new Date().toLocaleDateString('fr-FR')}); addActivity(`RDV planifié avec <strong>${c.name}</strong> — ${date} à ${time}`, '#0F6E56'); saveContacts(); }
+  const r = { id:Date.now().toString()+Math.random().toString(36).substr(2,5), contactId, date, time, type:document.getElementById('rdv-type').value, notes:document.getElementById('rdv-notes').value, done:false };
+  saveRdvToDB(r);
+  if (c) { c.label='rdv'; c.history=c.history||[]; c.history.push({action:`RDV planifié — ${date} ${time}`,date:new Date().toLocaleDateString('fr-FR')}); addActivity(`RDV planifié avec <strong>${c.name}</strong> — ${date} à ${time}`, '#0F6E56'); saveContactToDB(c); }
   toast('RDV planifié !', 'success');
   closeModal('modal-rdv');
   renderAgenda();
@@ -2845,7 +2830,8 @@ function doImport() {
     dataLines.forEach(line => {
       const parts = line.split(',').map(p=>p.replace(/^"|"$/g,'').trim());
       if (parts[0] && parts[1]) {
-        contacts.unshift({ id:nextId++, name:parts[0], phone:parts[1], country:parts[2]||'', label:parts[3]||'nouveau', note:parts[4]||'', priority:'basse', source:'Import CSV', email:'', interest:'', date:new Date().toISOString().slice(0,10), history:[{action:'Importé via CSV',date:new Date().toLocaleDateString('fr-FR')}] });
+        const c = { id:Date.now().toString()+Math.random().toString(36).substr(2,5), name:parts[0], phone:parts[1], country:parts[2]||'', label:parts[3]||'nouveau', note:parts[4]||'', priority:'basse', source:'Import CSV', email:'', interest:'', date:new Date().toISOString().slice(0,10), history:[{action:'Importé via CSV',date:new Date().toLocaleDateString('fr-FR')}] };
+        saveContactToDB(c);
         added++;
       }
     });
