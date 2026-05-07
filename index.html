@@ -1185,6 +1185,50 @@ input[type="checkbox"] {
   .filter-chips { width: 100%; }
   .prio-select { width: 100%; }
 }
+
+.mobile-menu-btn { display: none; }
+.mobile-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1500; align-items: flex-start; justify-content: flex-end; }
+.mobile-menu-overlay.open { display: flex; }
+.mobile-menu-panel { width: min(320px, 100%); height: 100%; background: var(--sidebar-bg); padding: 20px; overflow-y: auto; }
+.mobile-menu-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.mobile-menu-title { color: #fff; font-size: 16px; font-weight: 600; }
+.mobile-menu-panel .nav-item { color: #fff; background: transparent; border-radius: 10px; }
+.mobile-menu-panel .nav-item.active, .mobile-menu-panel .nav-item:hover { background: rgba(255,255,255,0.08); }
+@media (max-width: 900px) {
+  body { flex-direction: column; height: auto; overflow: auto; }
+  .sidebar { display: none; }
+  .mobile-menu-btn { display: inline-flex; }
+  .main { width: 100%; min-height: auto; }
+  .topbar { flex-wrap: wrap; padding: 16px; gap: 10px; }
+  .search-bar { width: 100%; max-width: none; }
+  .contacts-toolbar { flex-wrap: wrap; gap: 10px; }
+  .filter-chips { width: 100%; }
+  .prio-select { width: auto; min-width: 140px; }
+  .content-area { flex-direction: column; }
+  .dashboard-grid, .agenda-layout, .contacts-body, #rapport-bottom { display: flex; flex-direction: column; }
+  .agenda-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+  .agenda-main { padding: 16px; }
+  .detail-slide { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+  .contacts-table td, .contacts-table th { padding: 10px 12px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-card { min-width: 0; }
+}
+
+@media (max-width: 650px) {
+  .topbar { padding: 14px; }
+  .btn, .btn-primary, .btn-secondary, .btn-sm { width: 100%; justify-content: center; }
+  .search-bar { width: 100%; }
+  .sidebar-nav, .sidebar-labels { padding: 0 8px; }
+  .nav-item, .label-nav-item { font-size: 13px; padding: 10px 12px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .agenda-sidebar { padding: 12px; }
+  .agenda-main { padding: 16px 12px; }
+  .script-card { max-width: 100%; }
+  .contacts-toolbar { flex-direction: column; align-items: stretch; }
+  .filter-chips { width: 100%; }
+  .prio-select { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -1202,21 +1246,21 @@ input[type="checkbox"] {
   </div>
 
   <nav class="sidebar-nav">
-    <button class="nav-item active" onclick="showView('dashboard')">
+    <button class="nav-item active" data-view="dashboard" onclick="showView('dashboard')">
       <span class="nav-icon">📊</span> Tableau de bord
     </button>
-    <button class="nav-item" onclick="showView('contacts')">
+    <button class="nav-item" data-view="contacts" onclick="showView('contacts')">
       <span class="nav-icon">👥</span> Contacts
       <span class="nav-badge" id="badge-total">0</span>
     </button>
-    <button class="nav-item" onclick="showView('agenda')">
+    <button class="nav-item" data-view="agenda" onclick="showView('agenda')">
       <span class="nav-icon">📅</span> Agenda & RDV
       <span class="nav-badge amber" id="badge-rdv">0</span>
     </button>
-    <button class="nav-item" onclick="showView('scripts')">
+    <button class="nav-item" data-view="scripts" onclick="showView('scripts')">
       <span class="nav-icon">💬</span> Scripts messages
     </button>
-    <button class="nav-item" onclick="showView('rapports')">
+    <button class="nav-item" data-view="rapports" onclick="showView('rapports')">
       <span class="nav-icon">📈</span> Rapports
     </button>
 
@@ -1235,9 +1279,40 @@ input[type="checkbox"] {
   </div>
 </aside>
 
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu(event)">
+  <div class="mobile-menu-panel" onclick="event.stopPropagation()">
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-title">Menu Kreaglobe</div>
+      <button class="modal-close" onclick="toggleMobileMenu()">×</button>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="dashboard" onclick="showView('dashboard'); toggleMobileMenu()">
+        <span class="nav-icon">📊</span> Tableau de bord
+      </button>
+      <button class="nav-item" data-view="contacts" onclick="showView('contacts'); toggleMobileMenu()">
+        <span class="nav-icon">👥</span> Contacts
+        <span class="nav-badge" id="mobile-badge-total">0</span>
+      </button>
+      <button class="nav-item" data-view="agenda" onclick="showView('agenda'); toggleMobileMenu()">
+        <span class="nav-icon">📅</span> Agenda & RDV
+        <span class="nav-badge amber" id="mobile-badge-rdv">0</span>
+      </button>
+      <button class="nav-item" data-view="scripts" onclick="showView('scripts'); toggleMobileMenu()">
+        <span class="nav-icon">💬</span> Scripts messages
+      </button>
+      <button class="nav-item" data-view="rapports" onclick="showView('rapports'); toggleMobileMenu()">
+        <span class="nav-icon">📈</span> Rapports
+      </button>
+    </nav>
+  </div>
+</div>
+
 <!-- ─── MAIN ─── -->
 <div class="main">
   <div class="topbar">
+    <button class="btn btn-ghost mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Ouvrir le menu">
+      <span style="font-size:18px">☰</span>
+    </button>
     <div class="topbar-title" id="topbar-title">Tableau de bord</div>
     <div class="topbar-spacer"></div>
     <div class="search-bar">
@@ -1775,7 +1850,7 @@ function filterContacts() {
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === name));
   const titles = { dashboard:'Tableau de bord', contacts:'Contacts', agenda:'Agenda & RDV', scripts:'Scripts messages', rapports:'Rapports' };
   document.getElementById('topbar-title').textContent = titles[name] || '';
   currentView = name;
@@ -1784,6 +1859,24 @@ function showView(name) {
   if (name === 'agenda') renderAgenda();
   if (name === 'scripts') renderScripts();
   if (name === 'rapports') renderRapports();
+  updateMobileBadges();
+  closeMobileMenu();
+}
+
+function toggleMobileMenu(event) {
+  if (event && event.target !== document.getElementById('mobile-menu-overlay')) return;
+  const overlay = document.getElementById('mobile-menu-overlay');
+  overlay.classList.toggle('open');
+}
+
+function closeMobileMenu() {
+  const overlay = document.getElementById('mobile-menu-overlay');
+  if (overlay.classList.contains('open')) overlay.classList.remove('open');
+}
+
+function updateMobileBadges() {
+  document.getElementById('mobile-badge-total').textContent = document.getElementById('badge-total').textContent;
+  document.getElementById('mobile-badge-rdv').textContent = document.getElementById('badge-rdv').textContent;
 }
 
 // ─────────────────────────────────────────
@@ -2490,6 +2583,7 @@ function closeModal(id, e) {
 // ─────────────────────────────────────────
 selectedDay = new Date();
 renderDashboard();
+updateMobileBadges();
 populateLabelSelects();
 </script>
 </body>
