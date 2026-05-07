@@ -15,7 +15,7 @@
   --bg: #f4f6f8;
   --sidebar-bg: #1a1f2e;
   --sidebar-text: #a8b3cf;
-  --sidebar-active: #ffffff;
+  --sidebar-active: #ffffff;a
   --card-bg: #ffffff;
   --border: #e8ecf0;
   --text-primary: #1a1f2e;
@@ -797,3 +797,2083 @@ body {
 .cal-day.today { background: var(--green); color: #fff; font-weight: 600; }
 .cal-day.selected { background: #dcf8c6; color: var(--green-dark); font-weight: 600; }
 .cal-day.has-event::after { content: ''; display: block; width: 4px; height: 4px; border-radius: 50%; background: var(--green); position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); }
+.cal-day { position: relative; }
+.cal-day.other-month { color: var(--text-muted); opacity: 0.5; }
+
+.upcoming-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 16px 0 8px; }
+
+.upcoming-rdv {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.12s;
+  margin-bottom: 6px;
+}
+
+.upcoming-rdv:hover { border-color: var(--green); background: #f0fdf4; }
+
+.rdv-time-block { min-width: 40px; }
+.rdv-time-val { font-size: 13px; font-weight: 600; color: var(--green-dark); font-family: 'DM Mono', monospace; }
+.rdv-time-date { font-size: 10px; color: var(--text-muted); }
+.rdv-info-block { flex: 1; }
+.rdv-cname { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.rdv-cdesc { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; }
+
+.agenda-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+
+.day-view-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.day-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+.day-sub { font-size: 13px; color: var(--text-secondary); }
+
+.time-slots { display: flex; flex-direction: column; gap: 2px; }
+
+.time-slot {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  min-height: 48px;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.slot-hour {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  padding-top: 4px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.slot-line {
+  border-top: 1px solid #f0f2f6;
+  flex: 1;
+  padding-top: 4px;
+  min-height: 44px;
+}
+
+.slot-event {
+  background: #dcf8c6;
+  border-left: 3px solid var(--green);
+  border-radius: 0 6px 6px 0;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.12s;
+  display: inline-block;
+  min-width: 200px;
+  margin-bottom: 2px;
+}
+
+.slot-event:hover { background: #bbf7d0; }
+.slot-event-name { font-size: 13px; font-weight: 600; color: #14532d; }
+.slot-event-detail { font-size: 11.5px; color: #166534; margin-top: 1px; }
+
+/* ─── SCRIPTS VIEW ─── */
+#view-scripts {
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.scripts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.script-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.script-card-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.script-stage-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.script-stage-name { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.script-stage-sub { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+
+.script-messages { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+
+.msg-bubble {
+  background: var(--green-light);
+  border-radius: 0 12px 12px 12px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  color: #1a3327;
+  line-height: 1.55;
+  position: relative;
+}
+
+.msg-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -6px;
+  border-width: 0 6px 6px 0;
+  border-style: solid;
+  border-color: transparent var(--green-light) transparent transparent;
+}
+
+.copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  padding: 7px;
+  background: transparent;
+  border: 1px dashed #c0c8d8;
+  border-radius: var(--radius-xs);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.12s;
+  margin-top: 4px;
+}
+
+.copy-btn:hover { background: var(--bg); border-style: solid; color: var(--green-dark); }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  width: 480px;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-title { font-size: 16px; font-weight: 600; color: var(--text-primary); flex: 1; }
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  line-height: 1;
+}
+
+.modal-close:hover { color: var(--text-primary); }
+
+.modal-body { padding: 20px 24px; }
+
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.12s;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(37,211,102,0.12);
+}
+
+.form-textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.modal-footer {
+  padding: 14px 24px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* ─── NOTIFICATIONS ─── */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--text-primary);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+}
+
+.toast.success { background: var(--green-dark); }
+.toast.error { background: #a32d2d; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.empty-state svg { opacity: 0.3; margin-bottom: 16px; }
+.empty-state h3 { font-size: 15px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+.empty-state p { font-size: 13px; }
+
+/* ─── RAPPORTS VIEW ─── */
+#view-rapports {
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 24px;
+  gap: 20px;
+}
+
+.rapport-header { display: flex; align-items: center; gap: 12px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+.kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+
+.kpi-title { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
+.kpi-value { font-size: 32px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -0.04em; }
+.kpi-detail { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.conv-funnel {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.conv-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+
+.funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.funnel-step-bar {
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  transition: width 0.8s ease;
+}
+
+.funnel-step-label { font-size: 12px; color: var(--text-secondary); min-width: 100px; }
+.funnel-step-cnt { font-size: 13px; font-weight: 600; color: var(--text-primary); font-family: 'DM Mono', monospace; min-width: 30px; }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Checkbox */
+input[type="checkbox"] {
+  width: 14px; height: 14px; cursor: pointer; accent-color: var(--green);
+}
+
+.select-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+
+/* ─── MOBILE MENU (always present) ─── */
+.mobile-menu-btn { display: none; }
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 1500;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.mobile-menu-overlay.open { display: flex; justify-content: flex-start; }
+.mobile-menu-panel {
+  width: min(300px, 85vw);
+  height: 100%;
+  background: var(--sidebar-bg);
+  padding: 20px 16px;
+  overflow-y: auto;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+  animation: slideInLeft 0.25s ease;
+}
+@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mobile-menu-title { color: #fff; font-size: 17px; font-weight: 600; }
+.mobile-menu-panel .nav-item {
+  color: var(--sidebar-text);
+  background: transparent;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14.5px;
+  margin-bottom: 4px;
+}
+.mobile-menu-panel .nav-item.active { background: rgba(37,211,102,0.15); color: #fff; }
+.mobile-menu-panel .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+/* ─── RESPONSIVE ≤ 900px (Tablet + Mobile) ─── */
+@media (max-width: 900px) {
+  body {
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* Hide desktop sidebar, show mobile menu button */
+  .sidebar { display: none; }
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  /* Main fills viewport */
+  .main {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Topbar */
+  .topbar {
+    padding: 10px 14px;
+    height: auto;
+    min-height: 56px;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .topbar-title { font-size: 15px; }
+
+  /* Content area */
+  .content-area {
+    flex: 1;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  /* Search bar in topbar */
+  .search-bar {
+    order: 10;
+    width: 100%;
+    max-width: none;
+    height: 40px;
+  }
+
+  /* Stats grid - 2 columns on tablet */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* Dashboard */
+  #view-dashboard { padding: 16px; gap: 16px; }
+  .dashboard-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .section-card { min-width: 0; }
+
+  /* Contacts */
+  .contacts-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+  .filter-chips {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    font-size: 12.5px;
+  }
+
+  /* Contacts table - horizontal scroll */
+  .contacts-table-wrap {
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .contacts-table {
+    min-width: 700px;
+  }
+  .contacts-table td, .contacts-table th {
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+
+  /* Detail slide - full width overlay on mobile */
+  .detail-slide {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1200;
+    border-left: none;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+    animation: slideInRight 0.2s ease;
+  }
+  .detail-slide:not(.open) { display: none; }
+  @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+  .contacts-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Agenda */
+  .agenda-layout {
+    display: flex !important;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .agenda-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    max-height: none;
+  }
+  .agenda-main { padding: 16px; }
+
+  /* Scripts */
+  .scripts-grid { grid-template-columns: 1fr; }
+  #view-scripts { padding: 16px; }
+
+  /* Rapports */
+  #view-rapports { padding: 16px; gap: 16px; }
+  .kpi-grid { grid-template-columns: 1fr; gap: 10px; }
+  #rapport-bottom {
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Modals - better mobile fit */
+  .modal-overlay { padding: 12px; align-items: flex-end; }
+  .modal-box {
+    width: 100% !important;
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 16px 16px 0 0;
+    animation: slideUpModal 0.25s ease;
+  }
+  @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-header { padding: 16px 18px 12px; }
+  .modal-body { padding: 14px 18px; }
+  .modal-footer { padding: 12px 18px 20px; }
+  .form-row { grid-template-columns: 1fr; gap: 10px; }
+  .form-input, .form-select, .form-textarea { font-size: 16px; padding: 12px 14px; }
+
+  /* Buttons - larger touch targets */
+  .btn { height: 40px; font-size: 13.5px; padding: 0 14px; }
+  .btn-sm { height: 36px; padding: 0 12px; font-size: 12.5px; }
+  .btn-wa { height: 46px; font-size: 14px; border-radius: 10px; }
+  .btn-archive-full { height: 42px; border-radius: 10px; }
+
+  /* Prio select in toolbar */
+  .prio-select { width: auto; min-width: 130px; height: 36px; font-size: 13px; }
+
+  /* Toast position */
+  .toast { bottom: 16px; right: 16px; left: 16px; text-align: center; border-radius: 10px; }
+}
+
+/* ─── RESPONSIVE ≤ 650px (Small phones) ─── */
+@media (max-width: 650px) {
+  /* Topbar */
+  .topbar {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  .topbar-title { font-size: 14px; }
+
+  /* Hide some topbar buttons, show only icons */
+  .topbar .btn-secondary,
+  .topbar .btn-primary {
+    width: auto;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+
+  /* Stats grid - single column */
+  .stats-grid { grid-template-columns: 1fr; gap: 8px; }
+  .stat-card { padding: 14px 16px; }
+  .stat-value { font-size: 24px; }
+  .stat-label { font-size: 11.5px; }
+
+  /* Dashboard */
+  #view-dashboard { padding: 12px; gap: 12px; }
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+  }
+
+  /* Contacts toolbar */
+  .contacts-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .filter-chips { width: 100%; }
+  .prio-select { width: 100%; }
+
+  /* Bottom bar on contacts */
+  #view-contacts > div > div:last-child {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+
+  /* Agenda */
+  .agenda-sidebar { padding: 12px; }
+  .agenda-main { padding: 12px; }
+  .day-view-header { flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 14px; }
+  .day-title { font-size: 16px; }
+  .mini-cal-grid { gap: 1px; }
+  .cal-day { font-size: 11.5px; }
+  .slot-event { min-width: unset; width: 100%; }
+
+  /* Scripts */
+  #view-scripts { padding: 12px; }
+  .scripts-grid { gap: 12px; }
+  .script-card-header { padding: 12px 14px; }
+  .script-messages { padding: 10px 14px; }
+  .msg-bubble { font-size: 12px; padding: 8px 10px; }
+
+  /* Rapports */
+  #view-rapports { padding: 12px; gap: 12px; }
+  .kpi-card { padding: 14px 16px; }
+  .kpi-value { font-size: 26px; }
+  .conv-funnel { padding: 14px; }
+  .funnel-step { gap: 8px; }
+  .funnel-step-label { font-size: 11px; min-width: 80px; }
+  .funnel-step-bar { min-width: 40px !important; font-size: 11px; height: 28px; }
+
+  /* Pays/funnel rows */
+  .funnel-row { gap: 8px; padding: 6px 0; }
+  .funnel-name { font-size: 12px; min-width: 90px; }
+  .pays-row { gap: 6px; }
+  .pays-name { font-size: 12px; }
+  .pays-bar-wrap { width: 60px !important; }
+
+  /* Detail panel mobile */
+  .detail-head { padding: 16px; gap: 12px; }
+  .detail-avatar-lg { width: 44px; height: 44px; font-size: 16px; border-radius: 12px; }
+  .detail-main-name { font-size: 14px; }
+  .detail-section { padding: 14px 16px; }
+  .detail-actions { padding: 12px 16px; }
+
+  /* Modal on very small screens */
+  .modal-overlay { padding: 0; }
+  .modal-box {
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh;
+  }
+}
+
+/* ─── RESPONSIVE ≤ 400px (Very small phones) ─── */
+@media (max-width: 400px) {
+  .topbar { padding: 8px 10px; min-height: 50px; }
+  .topbar-title { font-size: 13px; }
+  .mobile-menu-btn { width: 36px; height: 36px; font-size: 18px; }
+
+  .stat-card { padding: 12px 14px; }
+  .stat-value { font-size: 22px; }
+  .stat-icon { width: 32px; height: 32px; font-size: 15px; margin-bottom: 8px; }
+
+  #view-dashboard { padding: 10px; gap: 10px; }
+
+  .search-bar { height: 38px; }
+  .search-bar input { font-size: 14px; }
+
+  .chip { padding: 5px 10px; font-size: 11.5px; }
+
+  .btn { height: 38px; font-size: 13px; }
+  .btn-sm { height: 34px; font-size: 12px; }
+}
+
+/* ─── SAFE AREA for notched phones ─── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  @media (max-width: 900px) {
+    .modal-footer { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+    .toast { bottom: calc(16px + env(safe-area-inset-bottom)); }
+    .sidebar-footer { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+    .detail-actions { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+  }
+}
+
+/* ─── TOUCH OPTIMIZATIONS ─── */
+@media (hover: none) and (pointer: coarse) {
+  .nav-item { padding: 12px 14px; }
+  .chip { padding: 7px 14px; }
+  .contacts-table tbody tr { border-bottom: 1px solid #eef0f4; }
+  .contacts-table td { padding: 14px 12px; }
+  .rdv-item { padding: 14px 20px; }
+  .upcoming-rdv { padding: 12px 14px; }
+  .cal-day { min-height: 36px; }
+  .copy-btn { padding: 10px; font-size: 12.5px; }
+  input[type="checkbox"] { width: 18px; height: 18px; }
+  .detail-close-btn { font-size: 24px; padding: 8px; }
+  .modal-close { font-size: 24px; padding: 8px; }
+  .cal-nav-btn { width: 36px; height: 36px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">💬</div>
+      <div>
+        <div class="logo-text">Kreaglobe</div>
+        <div class="logo-sub">CRM WhatsApp Business</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-view="dashboard" onclick="showView('dashboard')">
+      <span class="nav-icon">📊</span> Tableau de bord
+    </button>
+    <button class="nav-item" data-view="contacts" onclick="showView('contacts')">
+      <span class="nav-icon">👥</span> Contacts
+      <span class="nav-badge" id="badge-total">0</span>
+    </button>
+    <button class="nav-item" data-view="agenda" onclick="showView('agenda')">
+      <span class="nav-icon">📅</span> Agenda & RDV
+      <span class="nav-badge amber" id="badge-rdv">0</span>
+    </button>
+    <button class="nav-item" data-view="scripts" onclick="showView('scripts')">
+      <span class="nav-icon">💬</span> Scripts messages
+    </button>
+    <button class="nav-item" data-view="rapports" onclick="showView('rapports')">
+      <span class="nav-icon">📈</span> Rapports
+    </button>
+
+    <div class="nav-section-label">Étiquettes</div>
+    <div id="sidebar-labels"></div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-pill">
+      <div class="user-avatar">KG</div>
+      <div>
+        <div class="user-name">Kreaglobe</div>
+        <div class="user-role">Secrétariat</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="closeMobileMenu()">
+  <div class="mobile-menu-panel" onclick="event.stopPropagation()">
+    <div class="mobile-menu-header">
+      <div class="mobile-menu-title">Menu Kreaglobe</div>
+      <button class="modal-close" onclick="closeMobileMenu()">×</button>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="dashboard" onclick="showView('dashboard'); closeMobileMenu()">
+        <span class="nav-icon">📊</span> Tableau de bord
+      </button>
+      <button class="nav-item" data-view="contacts" onclick="showView('contacts'); closeMobileMenu()">
+        <span class="nav-icon">👥</span> Contacts
+        <span class="nav-badge" id="mobile-badge-total">0</span>
+      </button>
+      <button class="nav-item" data-view="agenda" onclick="showView('agenda'); closeMobileMenu()">
+        <span class="nav-icon">📅</span> Agenda & RDV
+        <span class="nav-badge amber" id="mobile-badge-rdv">0</span>
+      </button>
+      <button class="nav-item" data-view="scripts" onclick="showView('scripts'); closeMobileMenu()">
+        <span class="nav-icon">💬</span> Scripts messages
+      </button>
+      <button class="nav-item" data-view="rapports" onclick="showView('rapports'); closeMobileMenu()">
+        <span class="nav-icon">📈</span> Rapports
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+  <div class="topbar">
+    <button class="btn btn-ghost mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Ouvrir le menu">
+      <span style="font-size:18px">☰</span>
+    </button>
+    <div class="topbar-title" id="topbar-title">Tableau de bord</div>
+    <div class="topbar-spacer"></div>
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Rechercher un contact..." id="global-search" oninput="handleGlobalSearch(this.value)" />
+    </div>
+    <button class="btn btn-secondary" onclick="openImportModal()">⬆ Importer</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Nouveau contact</button>
+  </div>
+
+  <div class="content-area">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="dashboard-grid">
+        <div>
+          <div class="section-card" style="margin-bottom:16px">
+            <div class="section-header">
+              <div class="section-title">🔻 Tunnel de conversion</div>
+              <div class="section-spacer"></div>
+              <div class="section-sub" id="funnel-date"></div>
+            </div>
+            <div class="funnel-list" id="funnel-list"></div>
+          </div>
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">🌍 Répartition par pays</div>
+            </div>
+            <div class="pays-list" id="pays-list"></div>
+          </div>
+        </div>
+        <div>
+          <div class="section-card" style="margin-bottom:16px">
+            <div class="section-header">
+              <div class="section-title">📅 RDV aujourd'hui</div>
+              <button class="btn btn-sm btn-secondary" onclick="showView('agenda')">Voir tout</button>
+            </div>
+            <div class="rdv-list" id="rdv-today"></div>
+          </div>
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">⚡ Activité récente</div>
+            </div>
+            <div class="activity-list" id="activity-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="view" id="view-contacts">
+      <div style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="contacts-toolbar">
+          <div class="filter-chips" id="filter-chips"></div>
+          <div style="flex:1"></div>
+          <select class="prio-select" style="width:140px;margin-top:0" onchange="filterByPriority(this.value)">
+            <option value="">Toute priorité</option>
+            <option value="haute">Haute</option>
+            <option value="moyenne">Moyenne</option>
+            <option value="basse">Basse</option>
+          </select>
+          <select class="prio-select" style="width:140px;margin-top:0" onchange="filterByPays(this.value)" id="pays-filter">
+            <option value="">Tous les pays</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+        <div class="contacts-body">
+          <div class="contacts-table-wrap" id="contacts-table-wrap">
+            <table class="contacts-table">
+              <thead>
+                <tr>
+                  <th style="width:36px"><input type="checkbox" onchange="selectAll(this)" /></th>
+                  <th>Contact</th>
+                  <th>Pays</th>
+                  <th>Étiquette</th>
+                  <th>Priorité</th>
+                  <th>Source</th>
+                  <th>Ajouté le</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="contacts-tbody"></tbody>
+            </table>
+          </div>
+          <div class="detail-slide" id="detail-slide"></div>
+        </div>
+        <div style="padding:10px 16px; background:#fff; border-top:1px solid var(--border); display:flex; align-items:center; gap:12px; font-size:12px; color:var(--text-secondary);">
+          <span id="table-count">0 contacts</span>
+          <div style="flex:1"></div>
+          <button class="btn btn-danger btn-sm" id="bulk-archive-btn" style="display:none" onclick="bulkArchive()">🗂 Archiver sélectionnés</button>
+          <button class="btn btn-secondary btn-sm" id="bulk-label-btn" style="display:none" onclick="openBulkLabelModal()">🏷 Étiquette groupée</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="view" id="view-agenda">
+      <div class="agenda-layout">
+        <div class="agenda-sidebar">
+          <div class="mini-cal-header">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+            <div class="mini-cal-title" id="cal-month-title"></div>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+          </div>
+          <div class="mini-cal-grid" id="mini-cal"></div>
+          <div class="upcoming-label">RDV à venir</div>
+          <div id="upcoming-rdv-list"></div>
+          <div style="margin-top:16px">
+            <button class="btn btn-primary" style="width:100%" onclick="openAddRdvModal()">+ Nouveau RDV</button>
+          </div>
+        </div>
+        <div class="agenda-main">
+          <div class="day-view-header">
+            <div>
+              <div class="day-title" id="day-title"></div>
+              <div class="day-sub" id="day-sub"></div>
+            </div>
+            <div style="flex:1"></div>
+            <button class="btn btn-secondary btn-sm" onclick="goToday()">Aujourd'hui</button>
+          </div>
+          <div class="time-slots" id="time-slots"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <div class="view" id="view-scripts">
+      <div style="margin-bottom:16px">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
+          Messages types à utiliser selon le stade du prospect. Cliquez sur "Copier" pour copier le message dans le presse-papier.
+        </div>
+        <div class="scripts-grid" id="scripts-grid"></div>
+      </div>
+    </div>
+
+    <!-- RAPPORTS -->
+    <div class="view" id="view-rapports">
+      <div class="rapport-header" style="margin-bottom:16px">
+        <div style="font-size:20px;font-weight:600">📈 Rapports & Analyse</div>
+        <div style="flex:1"></div>
+        <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export données</button>
+      </div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="conv-funnel" id="conv-funnel"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="rapport-bottom"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── MODALS ─── -->
+<div class="modal-overlay" id="modal-contact" style="display:none" onclick="closeModal('modal-contact',event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-contact-title">Nouveau contact</div>
+      <button class="modal-close" onclick="closeModal('modal-contact')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prénom & Nom *</label>
+          <input class="form-input" id="fc-name" type="text" placeholder="Ex : Moussa Diallo" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone WhatsApp *</label>
+          <input class="form-input" id="fc-phone" type="text" placeholder="+212 6 61 23 45 67" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Pays / Marché</label>
+          <select class="form-select" id="fc-country">
+            <option value="">— Choisir —</option>
+            <option>Maroc</option><option>Côte d'Ivoire</option><option>Bénin</option>
+            <option>Gabon</option><option>Togo</option><option>Sénégal</option>
+            <option>Cameroun</option><option>Mali</option><option>Burkina Faso</option><option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source du contact</label>
+          <select class="form-select" id="fc-source">
+            <option value="">— Choisir —</option>
+            <option>WhatsApp entrant</option><option>Publicité Facebook</option>
+            <option>Publicité Instagram</option><option>Bouche à oreille</option>
+            <option>Formulaire web</option><option>Appel direct</option><option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Étiquette</label>
+          <select class="form-select" id="fc-label"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priorité</label>
+          <select class="form-select" id="fc-priority">
+            <option value="basse">🟢 Basse</option>
+            <option value="moyenne" selected>🟡 Moyenne</option>
+            <option value="haute">🔴 Haute</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email (optionnel)</label>
+        <input class="form-input" id="fc-email" type="email" placeholder="contact@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Intérêt / Projet</label>
+        <input class="form-input" id="fc-interest" type="text" placeholder="Ex : Investissement immobilier au Maroc" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note initiale</label>
+        <textarea class="form-textarea" id="fc-note" placeholder="Contexte, observations, budget estimé..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-contact')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveContact()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-rdv" style="display:none" onclick="closeModal('modal-rdv',event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">Nouveau rendez-vous</div>
+      <button class="modal-close" onclick="closeModal('modal-rdv')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Contact *</label>
+        <select class="form-select" id="rdv-contact"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input class="form-input" id="rdv-date" type="date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Heure *</label>
+          <input class="form-input" id="rdv-time" type="time" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type de RDV</label>
+        <select class="form-select" id="rdv-type">
+          <option>Appel découverte</option>
+          <option>Présentation offre</option>
+          <option>Suivi formation</option>
+          <option>Relance</option>
+          <option>Signature</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="rdv-notes" placeholder="Objectif du RDV, points à aborder..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-rdv')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveRdv()">📅 Planifier</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-bulk-label" style="display:none" onclick="closeModal('modal-bulk-label',event)">
+  <div class="modal-box" style="width:360px" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">Étiquette groupée</div>
+      <button class="modal-close" onclick="closeModal('modal-bulk-label')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">Appliquer une étiquette à tous les contacts sélectionnés.</p>
+      <div class="form-group">
+        <label class="form-label">Nouvelle étiquette</label>
+        <select class="form-select" id="bulk-label-select"></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-label')">Annuler</button>
+      <button class="btn btn-primary" onclick="applyBulkLabel()">Appliquer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-import" style="display:none" onclick="closeModal('modal-import',event)">
+  <div class="modal-box" style="width:420px" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">Importer des contacts</div>
+      <button class="modal-close" onclick="closeModal('modal-import')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px">
+        Format CSV attendu : <code style="font-family:'DM Mono',monospace;background:#f0f2f6;padding:2px 6px;border-radius:4px;font-size:12px">nom,telephone,pays,etiquette,note</code>
+      </p>
+      <div class="form-group">
+        <label class="form-label">Fichier CSV</label>
+        <input class="form-input" type="file" accept=".csv" id="import-file" onchange="previewImport(this)" />
+      </div>
+      <div id="import-preview" style="display:none">
+        <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">Aperçu :</div>
+        <div id="import-preview-content" style="background:#f9fafb;border-radius:8px;padding:10px;font-size:12px;font-family:'DM Mono',monospace;color:var(--text-primary);max-height:140px;overflow-y:auto;"></div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:#dcf8c6;border-radius:8px;font-size:12px;color:#14532d;">
+        💡 Astuce : Exportez vos contacts WhatsApp depuis les paramètres, puis adaptez le CSV.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-import')">Annuler</button>
+      <button class="btn btn-primary" onclick="doImport()">⬆ Importer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────
+const LABELS = [
+  { id:'nouveau',    name:'Nouveau lead',       color:'#378ADD', bg:'#E6F1FB', text:'#0C447C', emoji:'🔵' },
+  { id:'formulaire', name:'Formulaire rempli',  color:'#639922', bg:'#EAF3DE', text:'#3B6D11', emoji:'📋' },
+  { id:'suivi',      name:'Suivi en cours',     color:'#BA7517', bg:'#FAEEDA', text:'#854F0B', emoji:'🔄' },
+  { id:'rdv',        name:'RDV fixé',           color:'#0F6E56', bg:'#E1F5EE', text:'#085041', emoji:'📅' },
+  { id:'formation',  name:'En formation',       color:'#533AB7', bg:'#EEEDFE', text:'#3C3489', emoji:'🎓' },
+  { id:'paye',       name:'Payé / Client',      color:'#25D366', bg:'#dcf8c6', text:'#0a6b35', emoji:'✅' },
+  { id:'relance',    name:'À relancer',         color:'#D85A30', bg:'#FAECE7', text:'#993C1D', emoji:'⚠️' },
+  { id:'froid',      name:'Lead froid',         color:'#888780', bg:'#F1EFE8', text:'#5F5E5A', emoji:'❄️' },
+  { id:'rien',       name:'Pas qualifié',       color:'#9B59B6', bg:'#F4E6FA', text:'#6C3483', emoji:'🚫' },
+  { id:'archive',    name:'Archivé',            color:'#E24B4A', bg:'#FCEBEB', text:'#A32D2D', emoji:'🗂' },
+];
+
+const PAYS_FLAGS = { 'Maroc':'🇲🇦','Côte d\'Ivoire':'🇨🇮','Bénin':'🇧🇯','Gabon':'🇬🇦','Togo':'🇹🇬','Sénégal':'🇸🇳','Cameroun':'🇨🇲','Mali':'🇲🇱','Burkina Faso':'🇧🇫','Autre':'🌍' };
+
+const SCRIPTS = [
+  {
+    stage: 'Nouveau lead',
+    emoji: '👋',
+    bg: '#E6F1FB',
+    iconColor: '#378ADD',
+    sub: 'Premier contact entrant',
+    messages: [
+      "Bonjour [Prénom] 👋 Je suis [Votre nom] de Kreaglobe. Merci de nous avoir contactés ! Comment puis-je vous aider aujourd'hui ?",
+      "Nous accompagnons des personnes comme vous dans leurs projets immobiliers en Afrique. Pour mieux vous conseiller, pouvez-vous me dire quel est votre projet ?",
+    ]
+  },
+  {
+    stage: 'Envoi du formulaire',
+    emoji: '📋',
+    bg: '#EAF3DE',
+    iconColor: '#639922',
+    sub: 'Qualifier le prospect',
+    messages: [
+      "Parfait [Prénom] ! Pour vous préparer une offre personnalisée, j'ai besoin de quelques informations. Voici notre formulaire : [LIEN FORMULAIRE] 📝 Cela prend moins de 2 minutes.",
+      "Une fois le formulaire rempli, je reviens vers vous rapidement avec une proposition adaptée à votre projet 🏠",
+    ]
+  },
+  {
+    stage: 'Suivi après formulaire',
+    emoji: '🔄',
+    bg: '#FAEEDA',
+    iconColor: '#BA7517',
+    sub: 'Relance si pas de réponse',
+    messages: [
+      "Bonjour [Prénom], je reviens vers vous suite à votre demande. Avez-vous eu l'occasion de remplir le formulaire ? Je reste disponible si vous avez des questions 😊",
+      "N'hésitez pas à me faire signe si vous souhaitez qu'on en discute directement par appel — c'est souvent plus simple !",
+    ]
+  },
+  {
+    stage: 'Prise de RDV',
+    emoji: '📅',
+    bg: '#E1F5EE',
+    iconColor: '#0F6E56',
+    sub: 'Fixer un appel ou meeting',
+    messages: [
+      "Bonjour [Prénom] ! J'ai bien reçu votre formulaire, merci 🙏 Je vous propose un appel pour vous présenter nos solutions. Êtes-vous disponible mardi ou jeudi en fin d'après-midi ?",
+      "Voici le lien pour réserver directement un créneau selon vos disponibilités : [LIEN CALENDLY] 📞",
+    ]
+  },
+  {
+    stage: 'Confirmation RDV',
+    emoji: '✅',
+    bg: '#dcf8c6',
+    iconColor: '#25D366',
+    sub: 'Rappel avant le RDV',
+    messages: [
+      "Bonjour [Prénom] 😊 Petit rappel : notre appel est prévu demain [JOUR] à [HEURE]. Je vous appellerai sur ce numéro WhatsApp. À très vite !",
+      "Si vous avez des questions en attendant, n'hésitez pas ! Bonne journée 🌟",
+    ]
+  },
+  {
+    stage: 'Après formation',
+    emoji: '🎓',
+    bg: '#EEEDFE',
+    iconColor: '#533AB7',
+    sub: 'Fidélisation & upsell',
+    messages: [
+      "Bonjour [Prénom] ! Comment s'est passée votre première semaine de formation ? Avez-vous des questions ou des points à éclaircir ? 🏡",
+      "Nous avons également un programme avancé pour aller plus loin — je peux vous en parler si vous êtes intéressé(e) 🚀",
+    ]
+  },
+  {
+    stage: 'Relance lead froid',
+    emoji: '🔥',
+    bg: '#FAECE7',
+    iconColor: '#D85A30',
+    sub: 'Reprendre le contact après silence',
+    messages: [
+      "Bonjour [Prénom] ! Cela fait un moment qu'on ne s'est pas parlé. Votre projet immobilier est-il toujours d'actualité ? Nous avons de nouvelles opportunités qui pourraient vous intéresser 🏘️",
+      "Pas de pression — juste un petit signe pour savoir si je peux vous être utile 😊 Bonne journée !",
+    ]
+  },
+  {
+    stage: 'Pas qualifié / Fin',
+    emoji: '🙏',
+    bg: '#F1EFE8',
+    iconColor: '#888780',
+    sub: 'Clôturer poliment',
+    messages: [
+      "Merci [Prénom] d'avoir pris le temps de nous contacter. Même si ce n'est pas le bon moment, n'hésitez pas à revenir vers nous quand vous serez prêt(e) 🙌",
+      "Je vous souhaite bonne chance dans votre projet. À bientôt peut-être ! 😊",
+    ]
+  },
+];
+
+const STORAGE_KEYS = {
+  contacts: 'kesglobe-crm-contacts',
+  rdvs: 'kesglobe-crm-rdvs',
+  activity: 'kesglobe-crm-activity',
+  nextId: 'kesglobe-crm-nextId',
+  nextRdvId: 'kesglobe-crm-nextRdvId',
+};
+
+function loadData(key, defaultValue) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : defaultValue;
+  } catch (err) {
+    return defaultValue;
+  }
+}
+
+function saveData(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (err) {
+    console.warn('Impossible de sauvegarder les données', err);
+  }
+}
+
+function saveContacts() {
+  saveData(STORAGE_KEYS.contacts, contacts);
+  saveData(STORAGE_KEYS.nextId, nextId);
+}
+
+function saveRdvs() {
+  saveData(STORAGE_KEYS.rdvs, rdvs);
+  saveData(STORAGE_KEYS.nextRdvId, nextRdvId);
+}
+
+function saveActivity() {
+  saveData(STORAGE_KEYS.activity, activity);
+}
+
+let contacts = loadData(STORAGE_KEYS.contacts, []);
+let rdvs = loadData(STORAGE_KEYS.rdvs, []);
+let activity = loadData(STORAGE_KEYS.activity, []);
+let nextId = loadData(STORAGE_KEYS.nextId, 1);
+let nextRdvId = loadData(STORAGE_KEYS.nextRdvId, 1);
+let currentView = 'dashboard';
+let currentFilter = 'all';
+let currentPriorityFilter = '';
+let currentPaysFilter = '';
+let currentSearch = '';
+let selectedContacts = new Set();
+let selectedContact = null;
+let calendarDate = new Date();
+let selectedDay = new Date();
+
+// ─────────────────────────────────────────
+//  UTILS
+// ─────────────────────────────────────────
+function getLabel(id) { return LABELS.find(l => l.id === id) || { name:id, color:'#888', bg:'#eee', text:'#444', emoji:'•' }; }
+function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('fr-FR', {day:'2-digit',month:'2-digit',year:'numeric'}); }
+
+function toast(msg, type='') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Message copié !', 'success')).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove();
+    toast('Message copié !', 'success');
+  });
+}
+
+function addActivity(text, color) {
+  activity.unshift({ text, color, time: 'à l\'instant' });
+  if (activity.length > 20) activity.pop();
+  saveActivity();
+}
+
+function populateLabelSelects() {
+  const selectors = ['fc-label','bulk-label-select'];
+  selectors.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = LABELS.map(l => `<option value="${l.id}">${l.emoji} ${l.name}</option>`).join('');
+  });
+}
+
+function filterContacts() {
+  let list = [...contacts];
+  if (currentFilter !== 'all') list = list.filter(c => c.label === currentFilter);
+  if (currentPriorityFilter) list = list.filter(c => c.priority === currentPriorityFilter);
+  if (currentPaysFilter) list = list.filter(c => c.country === currentPaysFilter);
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    list = list.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q) || (c.country||'').toLowerCase().includes(q) || (c.note||'').toLowerCase().includes(q));
+  }
+  return list;
+}
+
+// ─────────────────────────────────────────
+//  VIEWS
+// ─────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === name));
+  const titles = { dashboard:'Tableau de bord', contacts:'Contacts', agenda:'Agenda & RDV', scripts:'Scripts messages', rapports:'Rapports' };
+  document.getElementById('topbar-title').textContent = titles[name] || '';
+  currentView = name;
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'contacts') renderContacts();
+  if (name === 'agenda') renderAgenda();
+  if (name === 'scripts') renderScripts();
+  if (name === 'rapports') renderRapports();
+  updateMobileBadges();
+  closeMobileMenu();
+}
+
+function toggleMobileMenu() {
+  const overlay = document.getElementById('mobile-menu-overlay');
+  overlay.classList.toggle('open');
+  // Prevent body scroll when menu is open
+  document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : '';
+}
+
+function closeMobileMenu() {
+  const overlay = document.getElementById('mobile-menu-overlay');
+  if (overlay.classList.contains('open')) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function updateMobileBadges() {
+  document.getElementById('mobile-badge-total').textContent = document.getElementById('badge-total').textContent;
+  document.getElementById('mobile-badge-rdv').textContent = document.getElementById('badge-rdv').textContent;
+}
+
+// ─────────────────────────────────────────
+//  DASHBOARD
+// ─────────────────────────────────────────
+function renderDashboard() {
+  const total = contacts.length;
+  const nouveaux = contacts.filter(c=>c.label==='nouveau').length;
+  const rdvCount = contacts.filter(c=>c.label==='rdv').length;
+  const payes = contacts.filter(c=>c.label==='paye').length;
+  const archives = contacts.filter(c=>c.label==='archive').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#E6F1FB">📊</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-label">Total contacts</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#E6F1FB">🔵</div>
+      <div class="stat-value" style="color:#378ADD">${nouveaux}</div>
+      <div class="stat-label">Nouveaux leads</div>
+      <div class="stat-change up">↑ actifs ce mois</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#E1F5EE">📅</div>
+      <div class="stat-value" style="color:#0F6E56">${rdvCount}</div>
+      <div class="stat-label">RDV planifiés</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#dcf8c6">✅</div>
+      <div class="stat-value" style="color:#25D366">${payes}</div>
+      <div class="stat-label">Clients payants</div>
+      <div class="stat-change up">↑ Conversions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon" style="background:#FCEBEB">🗂</div>
+      <div class="stat-value" style="color:#E24B4A">${archives}</div>
+      <div class="stat-label">Archivés / Purgés</div>
+      <div class="stat-change down">À purger</div>
+    </div>
+  `;
+
+  // Funnel
+  const stages = LABELS.filter(l=>!['archive','rien'].includes(l.id));
+  const max = Math.max(...stages.map(s=>contacts.filter(c=>c.label===s.id).length),1);
+  document.getElementById('funnel-date').textContent = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('funnel-list').innerHTML = stages.map(s => {
+    const cnt = contacts.filter(c=>c.label===s.id).length;
+    const pct = total > 0 ? Math.round(cnt/total*100) : 0;
+    const barW = max > 0 ? Math.round(cnt/max*100) : 0;
+    return `<div class="funnel-row">
+      <span class="funnel-dot" style="background:${s.color}"></span>
+      <span class="funnel-name">${s.name}</span>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:${barW}%;background:${s.color}"></div></div>
+      <span class="funnel-count">${cnt}</span>
+      <span class="funnel-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Pays
+  const paysCounts = {};
+  contacts.forEach(c => { if(c.country) paysCounts[c.country] = (paysCounts[c.country]||0)+1; });
+  const paysMax = Math.max(...Object.values(paysCounts),1);
+  document.getElementById('pays-list').innerHTML = Object.entries(paysCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([p,n]) => `
+    <div class="pays-row">
+      <span class="pays-flag">${PAYS_FLAGS[p]||'🌍'}</span>
+      <span class="pays-name">${p}</span>
+      <div class="pays-bar-wrap"><div class="pays-bar" style="width:${Math.round(n/paysMax*100)}%"></div></div>
+      <span class="pays-cnt">${n}</span>
+    </div>`).join('');
+
+  // RDV today
+  const today = new Date().toISOString().slice(0,10);
+  const todayRdvs = rdvs.filter(r=>r.date===today && !r.done);
+  document.getElementById('rdv-today').innerHTML = todayRdvs.length ? todayRdvs.map(r => {
+    const c = contacts.find(x=>x.id===r.contactId);
+    return `<div class="rdv-item" onclick="showView('agenda')">
+      <div class="rdv-time">${r.time}</div>
+      <div class="rdv-info">
+        <div class="rdv-name">${c ? c.name : '?'}</div>
+        <div class="rdv-detail">${r.type} ${c ? '· '+c.country : ''}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div style="padding:16px 20px;font-size:13px;color:var(--text-muted)">Aucun RDV prévu aujourd\'hui</div>';
+
+  // Activity
+  document.getElementById('activity-list').innerHTML = activity.slice(0,7).map(a => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div class="activity-text">${a.text}</div>
+      <div class="activity-time">${a.time}</div>
+    </div>`).join('');
+
+  // Badges
+  document.getElementById('badge-total').textContent = contacts.filter(c=>c.label!=='archive').length;
+  const upcomingRdv = rdvs.filter(r=>!r.done && r.date >= new Date().toISOString().slice(0,10));
+  document.getElementById('badge-rdv').textContent = upcomingRdv.length;
+
+  renderSidebarLabels();
+}
+
+function renderSidebarLabels() {
+  document.getElementById('sidebar-labels').innerHTML = LABELS.map(l => {
+    const cnt = contacts.filter(c=>c.label===l.id).length;
+    return `<button class="label-nav-item ${currentFilter===l.id?'active':''}" onclick="filterByLabel('${l.id}')">
+      <span class="label-dot" style="background:${l.color}"></span>
+      ${l.name}
+      <span class="label-cnt">${cnt}</span>
+    </button>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────
+//  CONTACTS
+// ─────────────────────────────────────────
+function renderContacts() {
+  const list = filterContacts();
+  document.getElementById('table-count').textContent = `${list.length} contact${list.length!==1?'s':''}`;
+
+  // Pays filter
+  const pays = [...new Set(contacts.map(c=>c.country).filter(Boolean))].sort();
+  const pf = document.getElementById('pays-filter');
+  const currentPF = pf.value;
+  pf.innerHTML = '<option value="">Tous les pays</option>' + pays.map(p=>`<option value="${p}" ${currentPF===p?'selected':''}>${PAYS_FLAGS[p]||'🌍'} ${p}</option>`).join('');
+
+  // Filter chips
+  document.getElementById('filter-chips').innerHTML = [
+    { id:'all', name:'Tous', color:'var(--text-primary)', bg:'var(--bg)', active: currentFilter==='all' },
+    ...LABELS
+  ].map(l => {
+    const isAll = l.id==='all';
+    const cnt = isAll ? contacts.length : contacts.filter(c=>c.label===l.id).length;
+    const style = !isAll && currentFilter===l.id ? `background:${l.color};border-color:${l.color};color:#fff` : '';
+    return `<button class="chip ${currentFilter===l.id?'active':''}" style="${style}" onclick="filterByLabel('${l.id}')">${isAll?'👥':l.emoji} ${l.name} <span style="opacity:0.7">${cnt}</span></button>`;
+  }).join('');
+
+  // Table
+  if (list.length === 0) {
+    document.getElementById('contacts-tbody').innerHTML = `<tr><td colspan="8"><div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><h3>Aucun contact trouvé</h3><p>Essayez un autre filtre ou ajoutez un nouveau contact</p></div></td></tr>`;
+    return;
+  }
+
+  document.getElementById('contacts-tbody').innerHTML = list.map(c => {
+    const l = getLabel(c.label);
+    const prioClass = {haute:'prio-haute',moyenne:'prio-moyenne',basse:'prio-basse'}[c.priority]||'prio-basse';
+    const prioLabel = {haute:'HAUTE',moyenne:'MOY.',basse:'BASSE'}[c.priority]||c.priority;
+    const isSelected = selectedContacts.has(c.id);
+    return `<tr class="${isSelected?'selected':''}" onclick="openDetail(${c.id})">
+      <td onclick="event.stopPropagation()"><input type="checkbox" ${isSelected?'checked':''} onchange="toggleSelect(${c.id},this)" /></td>
+      <td>
+        <div class="contact-cell">
+          <div class="c-avatar" style="background:${l.bg};color:${l.text}">${initials(c.name)}</div>
+          <div>
+            <div class="c-name">${c.name}</div>
+            <div class="c-phone">${c.phone}</div>
+          </div>
+        </div>
+      </td>
+      <td>${PAYS_FLAGS[c.country]||'🌍'} ${c.country||'—'}</td>
+      <td>
+        <span class="tag-pill" style="background:${l.bg};color:${l.text}">
+          <span class="tag-dot" style="background:${l.color}"></span>${l.name}
+        </span>
+      </td>
+      <td><span class="priority-badge ${prioClass}">${prioLabel}</span></td>
+      <td style="font-size:12px;color:var(--text-secondary)">${c.source||'—'}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${fmtDate(c.date)}</td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-sm btn-secondary" title="WhatsApp" onclick="openWA('${c.phone}')">💬</button>
+          <button class="btn btn-sm btn-secondary" title="Fiche" onclick="openDetail(${c.id})">👁</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  updateBulkButtons();
+  renderSidebarLabels();
+}
+
+function openDetail(id) {
+  const c = contacts.find(x=>x.id===id);
+  if (!c) return;
+  selectedContact = c;
+  const l = getLabel(c.label);
+  const slide = document.getElementById('detail-slide');
+  slide.classList.add('open');
+
+  const historyHtml = (c.history||[]).map(h=>`<div class="history-item">
+    <div class="history-dot"></div>
+    <div class="history-content">
+      <div class="history-action">${h.action}</div>
+      <div class="history-date">${h.date}</div>
+    </div>
+  </div>`).join('');
+
+  const prioLabel = {haute:'🔴 Haute',moyenne:'🟡 Moyenne',basse:'🟢 Basse'}[c.priority]||c.priority;
+
+  slide.innerHTML = `
+    <div class="detail-head">
+      <div class="detail-avatar-lg" style="background:${l.bg};color:${l.text}">${initials(c.name)}</div>
+      <div style="flex:1">
+        <div class="detail-main-name">${c.name}</div>
+        <div class="detail-main-phone">${c.phone}</div>
+        <div class="detail-main-country">${PAYS_FLAGS[c.country]||'🌍'} ${c.country||'—'} · ${prioLabel}</div>
+      </div>
+      <button class="detail-close-btn" onclick="closeDetail()">×</button>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Informations</div>
+      <div class="field-row"><label>Source</label><span class="field-val">${c.source||'—'}</span></div>
+      <div class="field-row"><label>Email</label><span class="field-val">${c.email||'—'}</span></div>
+      <div class="field-row"><label>Intérêt</label><span class="field-val">${c.interest||'—'}</span></div>
+      <div class="field-row"><label>Ajouté le</label><span class="field-val">${fmtDate(c.date)}</span></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Étiquette & Priorité</div>
+      <select class="detail-label-select" onchange="changeLabel(${c.id},this.value)">
+        ${LABELS.map(lab=>`<option value="${lab.id}" ${lab.id===c.label?'selected':''}>${lab.emoji} ${lab.name}</option>`).join('')}
+      </select>
+      <select class="prio-select" onchange="changePriority(${c.id},this.value)" style="margin-top:6px">
+        <option value="haute" ${c.priority==='haute'?'selected':''}>🔴 Priorité haute</option>
+        <option value="moyenne" ${c.priority==='moyenne'?'selected':''}>🟡 Priorité moyenne</option>
+        <option value="basse" ${c.priority==='basse'?'selected':''}>🟢 Priorité basse</option>
+      </select>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Note secrétariat</div>
+      <textarea class="note-area" id="note-area-${c.id}" onchange="updateNote(${c.id},this.value)">${c.note||''}</textarea>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Historique</div>
+      ${historyHtml || '<div style="font-size:12px;color:var(--text-muted)">Aucun historique</div>'}
+    </div>
+
+    <div class="detail-actions">
+      <button class="btn-wa" onclick="openWA('${c.phone}')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Ouvrir dans WhatsApp
+      </button>
+      <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="openAddRdvModalFor(${c.id})">📅 Planifier un RDV</button>
+      <button class="btn-archive-full" onclick="changeLabel(${c.id},'archive')">🗂 Archiver ce contact</button>
+    </div>
+  `;
+}
+
+function closeDetail() {
+  document.getElementById('detail-slide').classList.remove('open');
+  selectedContact = null;
+}
+
+function changeLabel(id, val) {
+  const c = contacts.find(x=>x.id===id);
+  if (!c) return;
+  const oldLabel = getLabel(c.label).name;
+  c.label = val;
+  const newLabel = getLabel(val).name;
+  c.history = c.history || [];
+  c.history.push({ action:`Étiquette : ${oldLabel} → ${newLabel}`, date: new Date().toLocaleDateString('fr-FR') });
+  addActivity(`Étiquette de <strong>${c.name}</strong> : ${oldLabel} → ${newLabel}`, getLabel(val).color);
+  saveContacts();
+  toast(`Étiquette mise à jour : ${newLabel}`, 'success');
+  renderContacts();
+  if (selectedContact && selectedContact.id === id) openDetail(id);
+}
+
+function changePriority(id, val) {
+  const c = contacts.find(x=>x.id===id);
+  if (!c) return;
+  c.priority = val;
+  c.history = c.history || [];
+  c.history.push({ action:`Priorité → ${val}`, date: new Date().toLocaleDateString('fr-FR') });
+  saveContacts();
+  toast('Priorité mise à jour', 'success');
+  renderContacts();
+}
+
+function updateNote(id, val) {
+  const c = contacts.find(x=>x.id===id);
+  if (c) { c.note = val; saveContacts(); toast('Note sauvegardée', 'success'); }
+}
+
+function toggleSelect(id, cb) {
+  if (cb.checked) selectedContacts.add(id);
+  else selectedContacts.delete(id);
+  updateBulkButtons();
+  renderContacts();
+}
+
+function selectAll(cb) {
+  const list = filterContacts();
+  if (cb.checked) list.forEach(c=>selectedContacts.add(c.id));
+  else selectedContacts.clear();
+  updateBulkButtons();
+  renderContacts();
+}
+
+function updateBulkButtons() {
+  const has = selectedContacts.size > 0;
+  document.getElementById('bulk-archive-btn').style.display = has ? '' : 'none';
+  document.getElementById('bulk-label-btn').style.display = has ? '' : 'none';
+  if (has) {
+    document.getElementById('bulk-archive-btn').textContent = `🗂 Archiver (${selectedContacts.size})`;
+    document.getElementById('bulk-label-btn').textContent = `🏷 Étiquette (${selectedContacts.size})`;
+  }
+}
+
+function bulkArchive() {
+  if (!selectedContacts.size) return;
+  if (!confirm(`Archiver ${selectedContacts.size} contact(s) ?`)) return;
+  selectedContacts.forEach(id => {
+    const c = contacts.find(x=>x.id===id);
+    if (c) { c.label='archive'; c.history=c.history||[]; c.history.push({action:'Archivé',date:new Date().toLocaleDateString('fr-FR')}); }
+  });
+  saveContacts();
+  addActivity(`${selectedContacts.size} contact(s) archivés`, '#E24B4A');
+  selectedContacts.clear();
+  toast(`Contacts archivés`, 'success');
+  renderContacts();
+}
+
+function openBulkLabelModal() {
+  populateLabelSelects();
+  document.getElementById('modal-bulk-label').style.display='flex';
+}
+
+function applyBulkLabel() {
+  const val = document.getElementById('bulk-label-select').value;
+  if (!val) { toast('Choisissez une étiquette','error'); return; }
+  selectedContacts.forEach(id => {
+    const c = contacts.find(x=>x.id===id);
+    if (c) { c.label=val; c.history=c.history||[]; c.history.push({action:`Étiquette groupée → ${getLabel(val).name}`,date:new Date().toLocaleDateString('fr-FR')}); }
+  });
+  saveContacts();
+  toast(`Étiquette appliquée à ${selectedContacts.size} contact(s)`, 'success');
+  selectedContacts.clear();
+  closeModal('modal-bulk-label');
+  renderContacts();
+}
+
+function filterByLabel(id) {
+  currentFilter = id;
+  selectedContacts.clear();
+  renderContacts();
+  renderSidebarLabels();
+}
+
+function filterByPriority(val) { currentPriorityFilter = val; renderContacts(); }
+function filterByPays(val) { currentPaysFilter = val; renderContacts(); }
+
+function handleGlobalSearch(val) {
+  currentSearch = val;
+  if (currentView === 'contacts') renderContacts();
+}
+
+function openWA(phone) {
+  const clean = phone.replace(/\s/g,'').replace('+','');
+  window.open('https://wa.me/'+clean, '_blank');
+}
+
+function exportCSV() {
+  const list = filterContacts();
+  const headers = ['Nom','Téléphone','Pays','Étiquette','Priorité','Source','Email','Intérêt','Note','Ajouté le'];
+  const rows = list.map(c => [c.name,c.phone,c.country||'',getLabel(c.label).name,c.priority||'',c.source||'',c.email||'',c.interest||'',c.note||'',fmtDate(c.date)]);
+  const csv = [headers, ...rows].map(r => r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = 'kesglobe-crm-export-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  toast('Export CSV téléchargé', 'success');
+}
+
+// ─────────────────────────────────────────
+//  ADD / EDIT CONTACT
+// ─────────────────────────────────────────
+function openAddModal() {
+  populateLabelSelects();
+  document.getElementById('modal-contact-title').textContent = 'Nouveau contact';
+  ['fc-name','fc-phone','fc-email','fc-interest','fc-note'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('fc-country').value='';
+  document.getElementById('fc-source').value='';
+  document.getElementById('fc-label').value='nouveau';
+  document.getElementById('fc-priority').value='moyenne';
+  document.getElementById('modal-contact').style.display='flex';
+}
+
+function saveContact() {
+  const name = document.getElementById('fc-name').value.trim();
+  const phone = document.getElementById('fc-phone').value.trim();
+  if (!name || !phone) { toast('Nom et téléphone requis','error'); return; }
+  const c = {
+    id: nextId++,
+    name, phone,
+    country: document.getElementById('fc-country').value,
+    label: document.getElementById('fc-label').value || 'nouveau',
+    priority: document.getElementById('fc-priority').value,
+    source: document.getElementById('fc-source').value,
+    email: document.getElementById('fc-email').value,
+    interest: document.getElementById('fc-interest').value,
+    note: document.getElementById('fc-note').value,
+    date: new Date().toISOString().slice(0,10),
+    history: [{ action:'Contact créé', date:new Date().toLocaleDateString('fr-FR') }]
+  };
+  contacts.unshift(c);
+  saveContacts();
+  addActivity(`<strong>${c.name}</strong> ajouté comme ${getLabel(c.label).name}`, getLabel(c.label).color);
+  closeModal('modal-contact');
+  toast('Contact ajouté !', 'success');
+  renderContacts();
+  renderDashboard();
+}
+
+// ─────────────────────────────────────────
+//  AGENDA
+// ─────────────────────────────────────────
+function renderAgenda() {
+  renderMiniCal();
+  renderDayView();
+  renderUpcoming();
+}
+
+function renderMiniCal() {
+  const y = calendarDate.getFullYear(), m = calendarDate.getMonth();
+  document.getElementById('cal-month-title').textContent = new Date(y,m,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'}).replace(/^./, c=>c.toUpperCase());
+  const firstDay = new Date(y,m,1).getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const today = new Date();
+  const rdvDates = new Set(rdvs.filter(r=>!r.done).map(r=>r.date));
+
+  let html = ['L','M','M','J','V','S','D'].map(d=>`<div class="cal-day-header">${d}</div>`).join('');
+  const startOffset = (firstDay+6)%7;
+  for (let i=0;i<startOffset;i++) { const d=new Date(y,m,-(startOffset-1-i)); html+=`<div class="cal-day other-month" onclick="selectDay(${d.getFullYear()},${d.getMonth()},${d.getDate()})">${d.getDate()}</div>`; }
+  for (let d=1;d<=daysInMonth;d++) {
+    const dt = new Date(y,m,d);
+    const dateStr = dt.toISOString().slice(0,10);
+    const isToday = dt.toDateString()===today.toDateString();
+    const isSel = dt.toDateString()===selectedDay.toDateString();
+    const hasEv = rdvDates.has(dateStr);
+    html+=`<div class="cal-day ${isToday?'today':''} ${isSel&&!isToday?'selected':''} ${hasEv?'has-event':''}" onclick="selectDay(${y},${m},${d})">${d}</div>`;
+  }
+  document.getElementById('mini-cal').innerHTML = html;
+}
+
+function selectDay(y, m, d) {
+  selectedDay = new Date(y,m,d);
+  renderMiniCal();
+  renderDayView();
+}
+
+function goToday() { selectedDay = new Date(); calendarDate = new Date(); renderAgenda(); }
+
+function changeMonth(dir) {
+  calendarDate.setMonth(calendarDate.getMonth()+dir);
+  renderMiniCal();
+}
+
+function renderDayView() {
+  const dateStr = selectedDay.toISOString().slice(0,10);
+  const dayName = selectedDay.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('day-title').textContent = dayName.replace(/^./,c=>c.toUpperCase());
+  const dayRdvs = rdvs.filter(r=>r.date===dateStr);
+  document.getElementById('day-sub').textContent = `${dayRdvs.length} rendez-vous`;
+
+  const hours = Array.from({length:13},(_,i)=>i+8);
+  document.getElementById('time-slots').innerHTML = hours.map(h => {
+    const hStr = String(h).padStart(2,'0')+':00';
+    const slotRdvs = dayRdvs.filter(r=>r.time.startsWith(String(h).padStart(2,'0')));
+    const eventsHtml = slotRdvs.map(r => {
+      const c = contacts.find(x=>x.id===r.contactId);
+      return `<div class="slot-event ${r.done?'opacity:0.5':''}">
+        <div class="slot-event-name">${c?c.name:'?'} · ${r.time}</div>
+        <div class="slot-event-detail">${r.type}${c?' · '+c.country:''}</div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;padding:3px 8px;font-size:11px;border-radius:4px;cursor:pointer" onclick="openWA('${c?c.phone:''}')" ${!c?'disabled':''}>💬 WA</button>
+          <button class="btn btn-sm btn-secondary" style="font-size:11px;padding:3px 8px" onclick="markRdvDone(${r.id})">${r.done?'✅ Fait':'Marquer fait'}</button>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="time-slot">
+      <div class="slot-hour">${hStr}</div>
+      <div class="slot-line">${eventsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderUpcoming() {
+  const today = new Date().toISOString().slice(0,10);
+  const upcoming = rdvs.filter(r=>!r.done && r.date>=today).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time)).slice(0,6);
+  document.getElementById('upcoming-rdv-list').innerHTML = upcoming.map(r => {
+    const c = contacts.find(x=>x.id===r.contactId);
+    const d = new Date(r.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    return `<div class="upcoming-rdv" onclick="selectDay(${r.date.split('-').map(Number).reduce((acc,n,i)=>i===1?[...acc,n-1]:([...acc,n]),[]).join(',')})">
+      <div class="rdv-time-block">
+        <div class="rdv-time-val">${r.time}</div>
+        <div class="rdv-time-date">${d}</div>
+      </div>
+      <div class="rdv-info-block">
+        <div class="rdv-cname">${c?c.name:'?'}</div>
+        <div class="rdv-cdesc">${r.type}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div style="font-size:12px;color:var(--text-muted);padding:8px 0">Aucun RDV à venir</div>';
+}
+
+function markRdvDone(id) {
+  const r = rdvs.find(x=>x.id===id);
+  if (r) { r.done=true; saveRdvs(); const c=contacts.find(x=>x.id===r.contactId); addActivity(`RDV terminé avec <strong>${c?c.name:'?'}</strong>`, '#25D366'); toast('RDV marqué comme terminé','success'); renderAgenda(); }
+}
+
+function openAddRdvModal() {
+  const sel = document.getElementById('rdv-contact');
+  sel.innerHTML = contacts.map(c=>`<option value="${c.id}">${c.name} — ${c.country||''}</option>`).join('');
+  document.getElementById('rdv-date').value = selectedDay.toISOString().slice(0,10);
+  document.getElementById('rdv-time').value = '10:00';
+  document.getElementById('rdv-notes').value = '';
+  document.getElementById('modal-rdv').style.display='flex';
+}
+
+function openAddRdvModalFor(contactId) {
+  openAddRdvModal();
+  document.getElementById('rdv-contact').value = contactId;
+  document.getElementById('modal-rdv').style.display='flex';
+}
+
+function saveRdv() {
+  const contactId = parseInt(document.getElementById('rdv-contact').value);
+  const date = document.getElementById('rdv-date').value;
+  const time = document.getElementById('rdv-time').value;
+  if (!contactId||!date||!time) { toast('Remplissez tous les champs requis','error'); return; }
+  const c = contacts.find(x=>x.id===contactId);
+  rdvs.push({ id:nextRdvId++, contactId, date, time, type:document.getElementById('rdv-type').value, notes:document.getElementById('rdv-notes').value, done:false });
+  saveRdvs();
+  if (c) { c.label='rdv'; c.history=c.history||[]; c.history.push({action:`RDV planifié — ${date} ${time}`,date:new Date().toLocaleDateString('fr-FR')}); addActivity(`RDV planifié avec <strong>${c.name}</strong> — ${date} à ${time}`, '#0F6E56'); saveContacts(); }
+  toast('RDV planifié !', 'success');
+  closeModal('modal-rdv');
+  renderAgenda();
+  renderDashboard();
+}
+
+// ─────────────────────────────────────────
+//  SCRIPTS
+// ─────────────────────────────────────────
+function renderScripts() {
+  document.getElementById('scripts-grid').innerHTML = SCRIPTS.map(s => `
+    <div class="script-card">
+      <div class="script-card-header">
+        <div class="script-stage-icon" style="background:${s.bg};font-size:18px">${s.emoji}</div>
+        <div>
+          <div class="script-stage-name">${s.stage}</div>
+          <div class="script-stage-sub">${s.sub}</div>
+        </div>
+      </div>
+      <div class="script-messages">
+        ${s.messages.map((m,i)=>`
+          <div class="msg-bubble">${m}</div>
+          <button class="copy-btn" onclick="copyText('${m.replace(/'/g,"\\'")}')">📋 Copier ce message</button>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────
+//  RAPPORTS
+// ─────────────────────────────────────────
+function renderRapports() {
+  const total = contacts.length;
+  const payes = contacts.filter(c=>c.label==='paye').length;
+  const rdvCount = rdvs.filter(r=>!r.done).length;
+  const convRate = total > 0 ? Math.round(payes/total*100) : 0;
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-title">Taux de conversion</div>
+      <div class="kpi-value" style="color:var(--green)">${convRate}%</div>
+      <div class="kpi-detail">${payes} clients sur ${total} contacts</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Contacts actifs</div>
+      <div class="kpi-value">${contacts.filter(c=>!['archive','rien'].includes(c.label)).length}</div>
+      <div class="kpi-detail">Hors archivés et non qualifiés</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">RDV à venir</div>
+      <div class="kpi-value" style="color:#0F6E56">${rdvCount}</div>
+      <div class="kpi-detail">Rendez-vous planifiés</div>
+    </div>
+  `;
+
+  const stages = [
+    {id:'nouveau',name:'Nouveaux leads'},{id:'formulaire',name:'Formulaire rempli'},{id:'suivi',name:'Suivi en cours'},
+    {id:'rdv',name:'RDV planifié'},{id:'formation',name:'En formation'},{id:'paye',name:'Clients payants'},
+  ];
+  const colors = ['#378ADD','#639922','#BA7517','#0F6E56','#533AB7','#25D366'];
+  const maxStage = Math.max(...stages.map(s=>contacts.filter(c=>c.label===s.id).length),1);
+
+  document.getElementById('conv-funnel').innerHTML = `
+    <div class="conv-title">Entonnoir de conversion détaillé</div>
+    ${stages.map((s,i) => {
+      const cnt = contacts.filter(c=>c.label===s.id).length;
+      const w = total>0 ? Math.max(Math.round(cnt/maxStage*100),4) : 4;
+      return `<div class="funnel-step">
+        <div class="funnel-step-label">${s.name}</div>
+        <div class="funnel-step-bar" style="width:${w}%;background:${colors[i]};min-width:60px">${cnt}</div>
+        <div class="funnel-step-cnt">${cnt}</div>
+      </div>`;
+    }).join('')}
+  `;
+
+  // Pays breakdown
+  const paysCounts = {};
+  contacts.forEach(c=>{if(c.country) paysCounts[c.country]=(paysCounts[c.country]||0)+1;});
+  const paysEntries = Object.entries(paysCounts).sort((a,b)=>b[1]-a[1]);
+
+  // Source breakdown
+  const sourceCounts = {};
+  contacts.forEach(c=>{if(c.source) sourceCounts[c.source]=(sourceCounts[c.source]||0)+1;});
+  const sourceEntries = Object.entries(sourceCounts).sort((a,b)=>b[1]-a[1]);
+
+  document.getElementById('rapport-bottom').innerHTML = `
+    <div class="section-card">
+      <div class="section-header"><div class="section-title">🌍 Contacts par pays</div></div>
+      <div style="padding:16px">
+        ${paysEntries.map(([p,n])=>`
+          <div class="pays-row">
+            <span class="pays-flag">${PAYS_FLAGS[p]||'🌍'}</span>
+            <span class="pays-name">${p}</span>
+            <div class="pays-bar-wrap" style="width:120px"><div class="pays-bar" style="width:${Math.round(n/total*100)}%"></div></div>
+            <span class="pays-cnt">${n} (${Math.round(n/total*100)}%)</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-header"><div class="section-title">📣 Sources d'acquisition</div></div>
+      <div style="padding:16px">
+        ${sourceEntries.map(([s,n])=>`
+          <div class="pays-row">
+            <span class="pays-name">${s}</span>
+            <div class="pays-bar-wrap" style="width:100px"><div class="pays-bar" style="width:${Math.round(n/total*100)}%"></div></div>
+            <span class="pays-cnt">${n} (${Math.round(n/total*100)}%)</span>
+          </div>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────
+//  IMPORT
+// ─────────────────────────────────────────
+function openImportModal() { document.getElementById('modal-import').style.display='flex'; }
+
+function previewImport(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').slice(0,5);
+    document.getElementById('import-preview-content').textContent = lines.join('\n');
+    document.getElementById('import-preview').style.display='block';
+  };
+  reader.readAsText(file);
+}
+
+function doImport() {
+  const file = document.getElementById('import-file').files[0];
+  if (!file) { toast('Sélectionnez un fichier CSV','error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').filter(l=>l.trim());
+    const dataLines = lines[0].toLowerCase().includes('nom') ? lines.slice(1) : lines;
+    let added = 0;
+    dataLines.forEach(line => {
+      const parts = line.split(',').map(p=>p.replace(/^"|"$/g,'').trim());
+      if (parts[0] && parts[1]) {
+        contacts.unshift({ id:nextId++, name:parts[0], phone:parts[1], country:parts[2]||'', label:parts[3]||'nouveau', note:parts[4]||'', priority:'basse', source:'Import CSV', email:'', interest:'', date:new Date().toISOString().slice(0,10), history:[{action:'Importé via CSV',date:new Date().toLocaleDateString('fr-FR')}] });
+        added++;
+      }
+    });
+    saveContacts();
+    toast(`${added} contact(s) importés`, 'success');
+    addActivity(`${added} contacts importés via CSV`, '#378ADD');
+    closeModal('modal-import');
+    renderContacts();
+    renderDashboard();
+  };
+  reader.readAsText(file);
+}
+
+// ─────────────────────────────────────────
+//  MODALS
+// ─────────────────────────────────────────
+function closeModal(id, e) {
+  if (e && e.target !== document.getElementById(id)) return;
+  document.getElementById(id).style.display='none';
+}
+
+// ─────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────
+selectedDay = new Date();
+renderDashboard();
+updateMobileBadges();
+populateLabelSelects();
+</script>
+</body>
+</html>
