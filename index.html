@@ -2054,6 +2054,50 @@ let selectedContact = null;
 let calendarDate = new Date();
 let selectedDay = new Date();
 
+// --- HELPER FUNCTIONS ---
+function getLabel(id) {
+  return LABELS.find(l => l.id === id) || { name: 'Inconnu', color: '#999', bg: '#eee', text: '#333', emoji: '❓' };
+}
+
+function initials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function toast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    setTimeout(() => t.remove(), 200);
+  }, 3000);
+}
+
+function addActivity(text, color) {
+  const a = {
+    text,
+    color,
+    time: 'À l\\'instant',
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  db.collection("activity").add(a).catch(e => console.error(e));
+}
+
+function saveContacts() {
+  // Vide: la sauvegarde se fait mnt dans Firestore via saveContactToDB()
+}
+
 db.collection("contacts").onSnapshot((snapshot) => {
   contacts = [];
   snapshot.forEach((doc) => contacts.push({ ...doc.data(), id: doc.id }));
